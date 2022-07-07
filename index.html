@@ -11,7 +11,7 @@
             width: 1000px;
             height: 1000px;
             display: flex;
-            background-color: beige;
+            background-color:aquamarine;
             justify-content: center;
             align-items: center;
         }
@@ -19,7 +19,7 @@
             border: 2px solid black ;
             width: 500px;
             height: 500px;
-            background-color: aquamarine;
+            background-color: beige;
             position: relative;
             overflow: hidden;
         }
@@ -27,9 +27,9 @@
             border-radius: 50%;
             opacity: 0.7;
             position: absolute;
-            border: 1px solid black;
-            width:100px;
-            height:100px;
+            border: 2px solid black;
+           /* width:100px;
+            height:100px;*/
         }
     </style>
 </head>
@@ -42,8 +42,9 @@
             const MAX_BUBBLES=20
             const COLORS=['red','blue','green']
             const containerBox=document.querySelector(".box")
-            const bubbles=[]
+            let bubbles=[]
             function makeBubble(){
+                //let id
                //pick random radius
                let radius=Math.floor(Math.random()*100)
                //pick random color
@@ -54,9 +55,30 @@
                div.classList.add("bubble")
                div.style.left=`${x-radius}px`
                div.style.top=`${y-radius}px`
+               div.style.width=`${radius*2}px`
+               div.style.height=`${radius*2}px`
                div.style.background=COLORS[color]
-               return {x,y,radius,color,div}
+               return {x,y,radius,color:COLORS[color],div,maxRadius:radius+Math.floor(Math.random()*100),draw(){
+                div.style.width=`${this.radius*2}px`
+               div.style.height=`${this.radius*2}px`
+               /*if(this.radius>this.maxRadius)
+               containerBox.removeChild(this.div)*/
+               }}
             }
+            function growBubbles(){
+                bubbles.forEach(bubble=>{bubble.radius+=2
+                bubble.draw()
+            })
+            }
+            function mainloop(){
+                growBubbles()
+                let rembubbles=bubbles.filter(b=> b.radius<b.maxRadius)
+                let removedBubbles=bubbles.filter(b=>!rembubbles.includes(b))
+                removedBubbles.forEach(b=>containerBox.removeChild(b.div))
+                bubbles=rembubbles
+                setTimeout(mainloop,1000)
+            }
+            
             function init(){
                 for(let i=0;i<MAX_BUBBLES;i++){
                     const bubble=makeBubble()
@@ -64,7 +86,18 @@
                     containerBox.appendChild(bubble.div)
                 }
             }
+            containerBox.addEventListener("click",function(e){
+                const element=e.target
+                if(element.classList.contains("bubble")){
+                    containerBox.removeChild(element)
+                    const bubble=bubbles.filter(b=>b.div==element)[0]
+                    bubbles=bubbles.filter(b=>b.div!=element)
+                    if(bubble.color=='red')
+                    alert("Red clicked")
+                }
+            })
             init()
+            mainloop()
         }
     </script>
 </body>
