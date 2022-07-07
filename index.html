@@ -21,10 +21,15 @@
             height: 500px;
             background-color: aquamarine;
             position: relative;
+            overflow: hidden;
         }
         .bubble{
             border-radius: 50%;
             opacity: 0.7;
+            position: absolute;
+            border: 1px solid black;
+            width:100px;
+            height:100px;
         }
     </style>
 </head>
@@ -33,9 +38,33 @@
         <div class="box"></div>
     </div>
     <script>
-        window.omload=function(){
+        window.onload=function(){
             const MAX_BUBBLES=20
-            
+            const COLORS=['red','blue','green']
+            const containerBox=document.querySelector(".box")
+            const bubbles=[]
+            function makeBubble(){
+               //pick random radius
+               let radius=Math.floor(Math.random()*100)
+               //pick random color
+               let color=Math.floor(Math.random()*10)%COLORS.length
+               let x=(Math.floor(Math.random()*100)%550)+Math.floor(Math.random()*500)
+               let y=(Math.floor(Math.random()*100)%550)+Math.floor(Math.random()*500)
+               let div=document.createElement("div")
+               div.classList.add("bubble")
+               div.style.left=`${x-radius}px`
+               div.style.top=`${y-radius}px`
+               div.style.background=COLORS[color]
+               return {x,y,radius,color,div}
+            }
+            function init(){
+                for(let i=0;i<MAX_BUBBLES;i++){
+                    const bubble=makeBubble()
+                    bubbles.push(bubble)
+                    containerBox.appendChild(bubble.div)
+                }
+            }
+            init()
         }
     </script>
 </body>
